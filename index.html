@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Redirecionando Magnet</title>
 
-    <!-- Meta tags de segurança adicionadas -->
+    <!-- Meta tags de segurança -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta name="referrer" content="no-referrer">
@@ -78,9 +78,10 @@
         z-index: 5;
         transform-origin: center center;
         pointer-events: none;
+        transition: transform 0.1s ease;
       }
 
-      /* Caixa de segurança adicionada */
+      /* Caixa de segurança */
       .secure-box {
         max-width: 700px;
         margin: 20px auto;
@@ -135,12 +136,8 @@
 
       function toggleMusic() {
         if (!audio) return;
-
-        if (audio.paused) {
-          audio.play();
-        } else {
-          audio.pause();
-        }
+        if (audio.paused) audio.play();
+        else audio.pause();
       }
 
       function animate() {
@@ -164,7 +161,9 @@
       }
 
       window.onload = () => {
-        // Caixa de segurança
+        magnetLink = decodeURIComponent(window.location.hash.substring(1));
+
+        // Cria caixa de segurança
         const secureBox = document.createElement('div');
         secureBox.className = 'secure-box';
         secureBox.innerHTML = `
@@ -172,7 +171,6 @@
           <p>Magnet2URL é uma ferramenta open-source que apenas redireciona links magnet para seu cliente de torrent local.
           Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
         `;
-        document.body.insertBefore(secureBox, document.querySelector('.regirako'));
 
         // Tilt suave
         secureBox.addEventListener('mousemove', e => {
@@ -187,8 +185,11 @@
           secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });
 
-        magnetLink = decodeURIComponent(window.location.hash.substring(1));
+        // Primeira tela: redirecionamento automático
         if (magnetLink.startsWith("magnet:?")) {
+          document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
+          document.body.appendChild(secureBox);
+
           window.location.href = magnetLink;
 
           setTimeout(() => {
@@ -217,13 +218,20 @@
             audio = document.getElementById('bg-audio');
             regirakoImg = document.querySelector('.regirako');
 
+            // Pulsação do Regirako só quando música toca
             audio.onplay = () => {
-              if (!context) {
-                setupAudioVisualizer();
-              }
+              if (!context) setupAudioVisualizer();
             };
+            audio.onpause = () => {
+              if (regirakoImg) regirakoImg.style.transform = 'scale(1)';
+            };
+
           }, 3000);
+
         } else {
+          // Segunda tela: tutorial caso falhe
+          document.body.innerHTML = '';
+          document.body.appendChild(secureBox);
         }
       };
     </script>
