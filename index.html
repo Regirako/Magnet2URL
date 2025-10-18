@@ -2,30 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redirecionando Magnet</title>
-
-    <!-- Metadados para legibilidade e credibilidade -->
-    <meta name="description" content="Magnet2URL — ferramenta open-source que redireciona magnet links para o cliente de torrent local. Nenhum dado é coletado pelo site e nenhum arquivo é hospedado ou transferido por este servidor." />
-    <meta name="author" content="Regirako" />
-    <meta name="robots" content="index, follow" />
-    <meta name="referrer" content="no-referrer" />
-
-    <!-- Segurança: impede sniffing de tipo e declara política de conteúdo -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <!-- Content-Security-Policy via meta (útil quando não há controle do servidor): restringe recursos externos -->
-    <meta http-equiv="Content-Security-Policy" content="
-      default-src 'self';
-      script-src 'self';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data:;
-      media-src 'self' blob:;
-      connect-src 'none';
-      frame-ancestors 'none';
-      object-src 'none';
-      base-uri 'self';
-    " />
-
     <style>
       body {
         font-family: 'Segoe UI', sans-serif;
@@ -95,45 +72,8 @@
         transform-origin: center center;
         pointer-events: none;
       }
-
-      /* Box de segurança (gradiente, borda arredondada, sombra e animação suave) */
-      .secure-box {
-        max-width: 700px;
-        margin: 26px auto 0 auto;
-        padding: 20px 22px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #c8f7c5 0%, #57a63a 100%);
-        box-shadow: 0 10px 25px rgba(68, 120, 45, 0.18);
-        animation: boxFloat 3s ease-in-out infinite alternate;
-        color: #083109;
-        text-align: left;
-      }
-      .secure-box h2 {
-        margin: 0 0 8px 0;
-        font-size: 20px;
-        text-align: center;
-        letter-spacing: 1px;
-      }
-      .secure-box p {
-        font-size: 15px;
-        line-height: 1.45;
-        margin: 0;
-        text-align: center;
-      }
-      @keyframes boxFloat {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-6px); }
-      }
-
-      /* Responsividade simples */
-      @media (max-width: 640px) {
-        .secure-box { padding: 16px; margin: 18px 12px 0 12px; }
-        .regirako { height: 360px; right: 8px; bottom: 50px; }
-      }
     </style>
-
     <script>
-      /* ===== Variáveis e funções mantidas ===== */
       let magnetLink = "";
       let audio;
       let context, analyser, source;
@@ -153,7 +93,6 @@
 
       function redirecionar() {
         if (magnetLink.startsWith("magnet:?")) {
-          // abre o magnet no cliente local
           window.location.href = magnetLink;
         }
       }
@@ -174,65 +113,41 @@
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         const average = data.reduce((a, b) => a + b, 0) / data.length;
-        const scale = 1 + (average / 512) * 0.42;
+        const scale = 1 + (average / 512) * 0.42; // Aumentar ou Diminuir nível da pulsação
         regirakoImg.style.transform = `scale(${scale})`;
         requestAnimationFrame(animate);
       }
 
       function setupAudioVisualizer() {
-        try {
-          context = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = context.createAnalyser();
-          source = context.createMediaElementSource(audio);
-          source.connect(analyser);
-          analyser.connect(context.destination);
-          animate();
-        } catch (e) {
-          // casos onde a API não está disponível ou bloqueada - ignora visualizador
-          console.warn('Audio visualizer não disponível:', e);
-        }
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = context.createAnalyser();
+        source = context.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(context.destination);
+        animate();
       }
 
-      /* ===== Inicialização ===== */
       window.onload = () => {
         magnetLink = decodeURIComponent(window.location.hash.substring(1));
-
         if (magnetLink.startsWith("magnet:?")) {
-          // comportamento original: tenta abrir imediatamente
           window.location.href = magnetLink;
 
-          // se não for capturado, mostra fallback com explicações e botões (mantido)
           setTimeout(() => {
             const musicSrc = getRandomMusic();
 
             document.body.innerHTML = `
-              <h1>Redirecionando para o cliente de torrent...</h1>
-
-              <div class="secure-box" role="region" aria-label="Informações de segurança do site">
-                <h2>MAGNET2URL</h2>
-                <p>
-                  Magnet2URL é um projeto open-source cujo único objetivo é encaminhar links no formato <strong>magnet:</strong> ao cliente de torrent local.
-                  <br><br>
-                  Não há coleta de dados de visitantes, não há alteração dos links magnet submetidos e nenhum arquivo é hospedado ou transferido por este servidor.
-                  <br><br>
-                  Esta página não realiza conexões remotas para armazenar ou processar seus links — todo processamento é local no navegador e o redirecionamento abre apenas o aplicativo cliente associado no computador do usuário.
-                </p>
-              </div>
-
               <h2>Você não foi redirecionado automaticamente?</h2>
               <p>
                 Isso pode ocorrer se você não tiver um programa de gerenciamento de arquivos torrents para capturar <strong>Magnet Links</strong> instalado.<br><br>
-                <strong>1.</strong> Baixe e instale o <a href='https://www.fosshub.com/qBittorrent.html' target='_blank' rel="noopener noreferrer"><strong>qBittorrent Windows 64x bits</strong></a>.<br>
+                <strong>1.</strong> Baixe e instale o <a href='https://www.fosshub.com/qBittorrent.html' target='_blank'><strong>qBittorrent Windows 64x bits</strong></a>.<br>
                 <strong>2.</strong> Durante a instalação, permita que ele seja o programa padrão para arquivos <strong>.torrent</strong> e <strong>Magnet Links</strong>.<br>
                 <strong>3.</strong> Volte nesta página e clique no botão abaixo:
               </p>
               <button onclick="redirecionar()">Clique aqui para tentar novamente</button><br>
               <button class="music-btn" onclick="toggleMusic()">Music ON/OFF</button>
-
               <div class="footer-banner">
-                <span><strong>Leia o que está escrito na página — é um tutorial de uso seguro para redirecionamento de Magnet Links.</strong></span>
+                <span><strong>Leia o que está escrito na página, é um tutorial de como utilizar o redirecionamento automático para o download no aplicativo de gerenciamento de arquivos torrents.</strong></span>
               </div>
-
               <audio id="bg-audio" autoplay loop>
                 <source src="${musicSrc}" type="audio/mpeg">
                 Seu navegador não suporta o elemento de áudio.
@@ -243,28 +158,15 @@
             audio = document.getElementById('bg-audio');
             regirakoImg = document.querySelector('.regirako');
 
-            if (audio) {
-              audio.onplay = () => {
-                if (!context) {
-                  setupAudioVisualizer();
-                }
-              };
-            }
+            audio.onplay = () => {
+              if (!context) {
+                setupAudioVisualizer();
+              }
+            };
           }, 3000);
         } else {
-          // sem magnet no hash: mostra a mensagem padrão + secure box
           document.body.innerHTML = `
             <h1>Redirecionando para o cliente de torrent...</h1>
-
-            <div class="secure-box" role="region" aria-label="Informações de segurança do site">
-              <h2>MAGNET2URL</h2>
-              <p>
-                Magnet2URL é um projeto open-source cujo único objetivo é encaminhar links no formato <strong>magnet:</strong> ao cliente de torrent local.
-                <br><br>
-                Não há coleta de dados de visitantes, não há alteração dos links magnet submetidos e nenhum arquivo é hospedado ou transferido por este servidor.
-              </p>
-            </div>
-
             <img class="regirako" src="assets/regirako.png" alt="Regirako">
           `;
         }
@@ -273,16 +175,6 @@
   </head>
   <body>
     <h1>Redirecionando para o cliente de torrent...</h1>
-
-    <div class="secure-box" role="region" aria-label="Informações de segurança do site">
-      <h2>MAGNET2URL</h2>
-      <p>
-        Magnet2URL é um projeto open-source cujo único objetivo é encaminhar links no formato <strong>magnet:</strong> ao cliente de torrent local.
-        <br><br>
-        Não há coleta de dados de visitantes, não há alteração dos links magnet submetidos e nenhum arquivo é hospedado ou transferido por este servidor.
-      </p>
-    </div>
-
     <img class="regirako" src="assets/regirako.png" alt="Regirako">
   </body>
 </html>
