@@ -3,13 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Redirecionando Magnet</title>
-
-    <!-- Meta tags de segurança -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta name="referrer" content="no-referrer">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self';">
-
     <style>
       body {
         font-family: 'Segoe UI', sans-serif;
@@ -78,36 +71,6 @@
         z-index: 5;
         transform-origin: center center;
         pointer-events: none;
-        transition: transform 0.1s ease;
-      }
-
-      /* Caixa de segurança */
-      .secure-box {
-        max-width: 700px;
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #c8f7c5 0%, #57a63a 100%);
-        box-shadow: 0 15px 30px rgba(68, 120, 45, 0.45);
-        color: #083109;
-        text-align: center;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        perspective: 1000px;
-        animation: floatBox 3s ease-in-out infinite alternate;
-      }
-      @keyframes floatBox {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-6px); }
-      }
-      .secure-box h2 {
-        margin: 0 0 8px 0;
-        font-size: 20px;
-        letter-spacing: 1px;
-      }
-      .secure-box p {
-        font-size: 15px;
-        line-height: 1.45;
-        margin: 0;
       }
     </style>
     <script>
@@ -136,8 +99,12 @@
 
       function toggleMusic() {
         if (!audio) return;
-        if (audio.paused) audio.play();
-        else audio.pause();
+
+        if (audio.paused) {
+          audio.play();
+        } else {
+          audio.pause();
+        }
       }
 
       function animate() {
@@ -146,7 +113,7 @@
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
         const average = data.reduce((a, b) => a + b, 0) / data.length;
-        const scale = 1 + (average / 512) * 0.42;
+        const scale = 1 + (average / 512) * 0.42; // Aumentar ou Diminuir nível da pulsação
         regirakoImg.style.transform = `scale(${scale})`;
         requestAnimationFrame(animate);
       }
@@ -162,40 +129,13 @@
 
       window.onload = () => {
         magnetLink = decodeURIComponent(window.location.hash.substring(1));
-
-        // Cria caixa de segurança
-        const secureBox = document.createElement('div');
-        secureBox.className = 'secure-box';
-        secureBox.innerHTML = `
-          <h2>MAGNET2URL</h2>
-          <p>Magnet2URL é uma ferramenta open-source que apenas redireciona links magnet para seu cliente de torrent local.
-          Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
-        `;
-
-        // Tilt suave
-        secureBox.addEventListener('mousemove', e => {
-          const rect = secureBox.getBoundingClientRect();
-          const x = e.clientX - rect.left - rect.width / 2;
-          const y = e.clientY - rect.top - rect.height / 2;
-          const rotateX = (y / rect.height) * 6;
-          const rotateY = (x / rect.width) * -6;
-          secureBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        });
-        secureBox.addEventListener('mouseleave', () => {
-          secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
-        });
-
-        // Primeira tela: redirecionamento automático
         if (magnetLink.startsWith("magnet:?")) {
-          document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
-          document.body.appendChild(secureBox);
-
           window.location.href = magnetLink;
 
           setTimeout(() => {
             const musicSrc = getRandomMusic();
 
-            document.body.innerHTML += `
+            document.body.innerHTML = `
               <h2>Você não foi redirecionado automaticamente?</h2>
               <p>
                 Isso pode ocorrer se você não tiver um programa de gerenciamento de arquivos torrents para capturar <strong>Magnet Links</strong> instalado.<br><br>
@@ -218,20 +158,17 @@
             audio = document.getElementById('bg-audio');
             regirakoImg = document.querySelector('.regirako');
 
-            // Pulsação do Regirako só quando música toca
             audio.onplay = () => {
-              if (!context) setupAudioVisualizer();
+              if (!context) {
+                setupAudioVisualizer();
+              }
             };
-            audio.onpause = () => {
-              if (regirakoImg) regirakoImg.style.transform = 'scale(1)';
-            };
-
           }, 3000);
-
         } else {
-          // Segunda tela: tutorial caso falhe
-          document.body.innerHTML = '';
-          document.body.appendChild(secureBox);
+          document.body.innerHTML = `
+            <h1>Redirecionando para o cliente de torrent...</h1>
+            <img class="regirako" src="assets/regirako.png" alt="Regirako">
+          `;
         }
       };
     </script>
