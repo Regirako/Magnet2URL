@@ -1,211 +1,215 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redirecionando Magnet</title>
+<head>
+<meta charset="UTF-8" />
+<title>Redirecionando Magnet</title>
 
-    <!-- Meta tags de segurança -->
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta name="referrer" content="no-referrer">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self';">
+<!-- Meta tags de segurança -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self';">
 
-    <style>
-      body {
-        font-family: 'Segoe UI', sans-serif;
-        text-align: center;
-        padding: 2em;
-        background-color: #f5f5f5;
-        position: relative;
-        margin: 0;
-      }
-      h1, h2, p { color: #333; }
-      button {
-        padding: 12px 24px;
-        font-size: 1em;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease;
-      }
-      button:hover { transform: scale(1.05); }
-      .music-btn { background-color: #d55901; }
-      .music-btn:hover { background-color: #842e03; }
-      .footer-banner {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 40px;
-        background: rgba(51,51,51,0.2);
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        z-index: 10;
-      }
-      .footer-banner span {
-        white-space: nowrap;
-        display: inline-block;
-        padding-left: 100%;
-        animation: slide-left 50s linear infinite;
-        color: #333;
-        font-size: 14px;
-        font-weight: bold;
-      }
-      @keyframes slide-left { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 2em;
+  background-color: #f5f5f5;
+  position: relative;
+  margin: 0;
+}
+h1, h2, p { color: #333; }
+button {
+  padding: 12px 24px;
+  font-size: 1em;
+  border: none;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+button:hover { background-color: #1b5e20; transform: scale(1.05); }
+.music-btn { background-color: #d55901; }
+.music-btn:hover { background-color: #842e03; }
 
-      .regirako {
-        position: fixed;
-        bottom: 60px;
-        right: 20px;
-        height: 600px;
-        opacity: 0.5;
-        z-index: 5;
-        transform-origin: center center;
-        pointer-events: none;
-        transition: transform 0.1s ease;
-      }
+.footer-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(51,51,51,0.2);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+}
+.footer-banner span {
+  white-space: nowrap;
+  display: inline-block;
+  padding-left: 100%;
+  animation: slide-left 50s linear infinite;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+}
+@keyframes slide-left { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-      .secure-box {
-        max-width: 700px;
-        margin: 20px auto;
-        padding: 20px;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #c8f7c5 0%, #57a63a 100%);
-        box-shadow: 0 15px 30px rgba(68, 120, 45, 0.45);
-        color: #083109;
-        text-align: center;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-        perspective: 1000px;
-        animation: floatBox 3s ease-in-out infinite alternate;
-      }
-      @keyframes floatBox {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-6px); }
-      }
-      .secure-box h2 { margin: 0 0 8px 0; font-size: 20px; letter-spacing: 1px; }
-      .secure-box p { font-size: 15px; line-height: 1.45; margin: 0; }
-    </style>
-  </head>
-  <body>
-    <h1>Redirecionando para o cliente de torrent...</h1>
-    <img class="regirako" src="assets/regirako.png" alt="Regirako">
+.regirako {
+  position: fixed;
+  bottom: 60px;
+  right: 20px;
+  height: 600px;
+  opacity: 0.5;
+  z-index: 5;
+  transform-origin: center center;
+  pointer-events: none;
+  transition: transform 0.1s ease;
+}
 
-    <script>
-      let magnetLink = "";
-      let audio;
-      let context, analyser, source;
-      let regirakoImg;
+.secure-box {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #c8f7c5 0%, #57a63a 100%);
+  box-shadow: 0 15px 30px rgba(68, 120, 45, 0.45);
+  color: #083109;
+  text-align: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  perspective: 1000px;
+  animation: floatBox 3s ease-in-out infinite alternate;
+}
+@keyframes floatBox {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+.secure-box h2 { margin: 0 0 8px 0; font-size: 20px; letter-spacing: 1px; }
+.secure-box p { font-size: 15px; line-height: 1.45; margin: 0; }
+</style>
+</head>
 
-      const musicList = [
-        'assets/tokyo.mp3',
-        'assets/mafland.mp3',
-        'assets/xuliana.mp3',
-        'assets/kenner.mp3'
-      ];
+<body>
+<h1>Redirecionando para o cliente de torrent...</h1>
+<img class="regirako" src="assets/regirako.png" alt="Regirako">
 
-      function getRandomMusic() {
-        const index = Math.floor(Math.random() * musicList.length);
-        return musicList[index];
-      }
+<script>
+let magnetLink = "";
+let audio;
+let context, analyser, source;
+let regirakoImg;
 
-      function redirecionar() {
-        if (magnetLink.startsWith("magnet:?")) {
-          window.location.href = magnetLink;
-        }
-      }
+const musicList = [
+  'assets/tokyo.mp3',
+  'assets/mafland.mp3',
+  'assets/xuliana.mp3',
+  'assets/kenner.mp3'
+];
 
-      function toggleMusic() {
-        if (!audio) return;
-        if (audio.paused) audio.play();
-        else audio.pause();
-      }
+function getRandomMusic() {
+  const index = Math.floor(Math.random() * musicList.length);
+  return musicList[index];
+}
 
-      function animate() {
-        if (!analyser || !regirakoImg) return;
-        const data = new Uint8Array(analyser.frequencyBinCount);
-        analyser.getByteFrequencyData(data);
-        const average = data.reduce((a,b)=>a+b,0)/data.length;
-        const scale = 1 + (average/512)*0.42;
-        regirakoImg.style.transform = `scale(${scale})`;
-        requestAnimationFrame(animate);
-      }
+function redirecionar() {
+  if (magnetLink.startsWith("magnet:?")) {
+    window.location.href = magnetLink;
+  }
+}
 
-      function setupAudioVisualizer() {
-        context = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = context.createAnalyser();
-        source = context.createMediaElementSource(audio);
-        source.connect(analyser);
-        analyser.connect(context.destination);
-        animate();
-      }
+function toggleMusic() {
+  if (!audio) return;
+  if (audio.paused) audio.play();
+  else audio.pause();
+}
 
-      window.onload = () => {
-        magnetLink = decodeURIComponent(window.location.hash.substring(1));
+function animate() {
+  if (!analyser || !regirakoImg) return;
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  const average = data.reduce((a,b)=>a+b,0)/data.length;
+  const scale = 1 + (average/512)*0.42;
+  regirakoImg.style.transform = `scale(${scale})`;
+  requestAnimationFrame(animate);
+}
 
-        // Cria secure-box
-        const secureBox = document.createElement('div');
-        secureBox.className = 'secure-box';
-        secureBox.innerHTML = `
-          <h2>MAGNET2URL</h2>
-          <p>Magnet2URL é uma ferramenta open-source que apenas redireciona links magnet para seu cliente de torrent local.
-          Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
-        `;
-        secureBox.addEventListener('mousemove', e => {
-          const rect = secureBox.getBoundingClientRect();
-          const x = e.clientX - rect.left - rect.width/2;
-          const y = e.clientY - rect.top - rect.height/2;
-          const rotateX = (y/rect.height)*6;
-          const rotateY = (x/rect.width)*-6;
-          secureBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-        });
-        secureBox.addEventListener('mouseleave', () => {
-          secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
-        });
+function setupAudioVisualizer() {
+  context = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = context.createAnalyser();
+  source = context.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(context.destination);
+  animate();
+}
 
-        // Primeira tela
-        if (magnetLink.startsWith("magnet:?")) {
-          // Mantém h1 + secure-box + regirako estática
-          document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
-          document.body.appendChild(secureBox);
+window.onload = () => {
+  magnetLink = decodeURIComponent(window.location.hash.substring(1));
 
-          // Redireciona automaticamente
-          window.location.href = magnetLink;
+  // Cria secure-box
+  const secureBox = document.createElement('div');
+  secureBox.className = 'secure-box';
+  secureBox.innerHTML = `
+    <h2>MAGNET2URL</h2>
+    <p>Magnet2URL é uma ferramenta open-source que apenas redireciona links magnet para seu cliente de torrent local.
+    Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
+  `;
+  secureBox.addEventListener('mousemove', e => {
+    const rect = secureBox.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width/2;
+    const y = e.clientY - rect.top - rect.height/2;
+    const rotateX = (y/rect.height)*6;
+    const rotateY = (x/rect.width)*-6;
+    secureBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+  secureBox.addEventListener('mouseleave', () => {
+    secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
+  });
 
-          setTimeout(() => {
-            const musicSrc = getRandomMusic();
-            document.body.innerHTML += `
-              <h2>Você não foi redirecionado automaticamente?</h2>
-              <p>
-                Isso pode ocorrer se você não tiver um programa de gerenciamento de arquivos torrents para capturar <strong>Magnet Links</strong> instalado.<br><br>
-                <strong>1.</strong> Baixe e instale o <a href='https://www.fosshub.com/qBittorrent.html' target='_blank'><strong>qBittorrent Windows 64x bits</strong></a>.<br>
-                <strong>2.</strong> Durante a instalação, permita que ele seja o programa padrão para arquivos <strong>.torrent</strong> e <strong>Magnet Links</strong>.<br>
-                <strong>3.</strong> Volte nesta página e clique no botão abaixo:
-              </p>
-              <button onclick="redirecionar()">Clique aqui para tentar novamente</button><br>
-              <button class="music-btn" onclick="toggleMusic()">Music ON/OFF</button>
-              <div class="footer-banner">
-                <span><strong>Leia o que está escrito na página, é um tutorial de como utilizar o redirecionamento automático para o download no aplicativo de gerenciamento de arquivos torrents.</strong></span>
-              </div>
-              <audio id="bg-audio" autoplay loop>
-                <source src="${musicSrc}" type="audio/mpeg">
-              </audio>
-              <img class="regirako" src="assets/regirako.png" alt="Regirako">
-            `;
-            audio = document.getElementById('bg-audio');
-            regirakoImg = document.querySelector('.regirako');
-            audio.onplay = () => { if (!context) setupAudioVisualizer(); };
-            audio.onpause = () => { if (regirakoImg) regirakoImg.style.transform='scale(1)'; };
-          }, 3000);
+  if (magnetLink.startsWith("magnet:?")) {
+    // Primeira tela: h1 + secure-box + regirako estática
+    document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
+    document.body.appendChild(secureBox);
+    regirakoImg = document.querySelector('.regirako');
 
-        } else {
-          // Segunda tela: apenas secure-box + tutorial
-          document.body.innerHTML = '';
-          document.body.appendChild(secureBox);
-        }
-      };
-    </script>
-  </body>
+    // Redirecionamento automático
+    window.location.href = magnetLink;
+
+    setTimeout(() => {
+      const musicSrc = getRandomMusic();
+      document.body.innerHTML += `
+        <h2>Você não foi redirecionado automaticamente?</h2>
+        <p>
+          Isso pode ocorrer se você não tiver um programa de gerenciamento de arquivos torrents para capturar <strong>Magnet Links</strong> instalado.<br><br>
+          <strong>1.</strong> Baixe e instale o <a href='https://www.fosshub.com/qBittorrent.html' target='_blank'><strong>qBittorrent Windows 64x bits</strong></a>.<br>
+          <strong>2.</strong> Durante a instalação, permita que ele seja o programa padrão para arquivos <strong>.torrent</strong> e <strong>Magnet Links</strong>.<br>
+          <strong>3.</strong> Volte nesta página e clique no botão abaixo:
+        </p>
+        <button onclick="redirecionar()">Clique aqui para tentar novamente</button><br>
+        <button class="music-btn" onclick="toggleMusic()">Music ON/OFF</button>
+        <div class="footer-banner">
+          <span><strong>Leia o que está escrito na página, é um tutorial de como utilizar o redirecionamento automático para o download no aplicativo de gerenciamento de arquivos torrents.</strong></span>
+        </div>
+        <audio id="bg-audio" autoplay loop>
+          <source src="${musicSrc}" type="audio/mpeg">
+        </audio>
+        <img class="regirako" src="assets/regirako.png" alt="Regirako">
+      `;
+      audio = document.getElementById('bg-audio');
+      regirakoImg = document.querySelector('.regirako');
+      audio.onplay = () => { if (!context) setupAudioVisualizer(); };
+      audio.onpause = () => { if (regirakoImg) regirakoImg.style.transform='scale(1)'; };
+    }, 3000);
+
+  } else {
+    // Segunda tela: apenas secure-box + tutorial, sem h1
+    document.body.innerHTML = '';
+    document.body.appendChild(secureBox);
+  }
+};
+</script>
+</body>
 </html>
