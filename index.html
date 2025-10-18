@@ -19,38 +19,27 @@
         position: relative;
         margin: 0;
       }
-      h1, h2, p {
-        color: #333;
-      }
+      h1, h2, p { color: #333; }
       button {
         padding: 12px 24px;
         font-size: 1em;
         border: none;
-        background-color: #2e7d32;
-        color: white;
         border-radius: 8px;
         cursor: pointer;
         margin-top: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         transition: transform 0.2s ease;
       }
-      button:hover {
-        background-color: #1b5e20;
-        transform: scale(1.05);
-      }
-      .music-btn {
-        background-color: #d55901;
-      }
-      .music-btn:hover {
-        background-color: #842e03;
-      }
+      button:hover { transform: scale(1.05); }
+      .music-btn { background-color: #d55901; }
+      .music-btn:hover { background-color: #842e03; }
       .footer-banner {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 40px;
-        background: rgba(51, 51, 51, 0.2);
+        background: rgba(51,51,51,0.2);
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -65,10 +54,8 @@
         font-size: 14px;
         font-weight: bold;
       }
-      @keyframes slide-left {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-100%); }
-      }
+      @keyframes slide-left { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
       .regirako {
         position: fixed;
         bottom: 60px;
@@ -81,7 +68,6 @@
         transition: transform 0.1s ease;
       }
 
-      /* Caixa de segurança */
       .secure-box {
         max-width: 700px;
         margin: 20px auto;
@@ -99,17 +85,14 @@
         0% { transform: translateY(0); }
         100% { transform: translateY(-6px); }
       }
-      .secure-box h2 {
-        margin: 0 0 8px 0;
-        font-size: 20px;
-        letter-spacing: 1px;
-      }
-      .secure-box p {
-        font-size: 15px;
-        line-height: 1.45;
-        margin: 0;
-      }
+      .secure-box h2 { margin: 0 0 8px 0; font-size: 20px; letter-spacing: 1px; }
+      .secure-box p { font-size: 15px; line-height: 1.45; margin: 0; }
     </style>
+  </head>
+  <body>
+    <h1>Redirecionando para o cliente de torrent...</h1>
+    <img class="regirako" src="assets/regirako.png" alt="Regirako">
+
     <script>
       let magnetLink = "";
       let audio;
@@ -142,11 +125,10 @@
 
       function animate() {
         if (!analyser || !regirakoImg) return;
-
         const data = new Uint8Array(analyser.frequencyBinCount);
         analyser.getByteFrequencyData(data);
-        const average = data.reduce((a, b) => a + b, 0) / data.length;
-        const scale = 1 + (average / 512) * 0.42;
+        const average = data.reduce((a,b)=>a+b,0)/data.length;
+        const scale = 1 + (average/512)*0.42;
         regirakoImg.style.transform = `scale(${scale})`;
         requestAnimationFrame(animate);
       }
@@ -163,7 +145,7 @@
       window.onload = () => {
         magnetLink = decodeURIComponent(window.location.hash.substring(1));
 
-        // Cria caixa de segurança
+        // Cria secure-box
         const secureBox = document.createElement('div');
         secureBox.className = 'secure-box';
         secureBox.innerHTML = `
@@ -171,30 +153,29 @@
           <p>Magnet2URL é uma ferramenta open-source que apenas redireciona links magnet para seu cliente de torrent local.
           Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
         `;
-
-        // Tilt suave
         secureBox.addEventListener('mousemove', e => {
           const rect = secureBox.getBoundingClientRect();
-          const x = e.clientX - rect.left - rect.width / 2;
-          const y = e.clientY - rect.top - rect.height / 2;
-          const rotateX = (y / rect.height) * 6;
-          const rotateY = (x / rect.width) * -6;
+          const x = e.clientX - rect.left - rect.width/2;
+          const y = e.clientY - rect.top - rect.height/2;
+          const rotateX = (y/rect.height)*6;
+          const rotateY = (x/rect.width)*-6;
           secureBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         });
         secureBox.addEventListener('mouseleave', () => {
           secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
         });
 
-        // Primeira tela: redirecionamento automático
+        // Primeira tela
         if (magnetLink.startsWith("magnet:?")) {
+          // Mantém h1 + secure-box + regirako estática
           document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
           document.body.appendChild(secureBox);
 
+          // Redireciona automaticamente
           window.location.href = magnetLink;
 
           setTimeout(() => {
             const musicSrc = getRandomMusic();
-
             document.body.innerHTML += `
               <h2>Você não foi redirecionado automaticamente?</h2>
               <p>
@@ -210,34 +191,21 @@
               </div>
               <audio id="bg-audio" autoplay loop>
                 <source src="${musicSrc}" type="audio/mpeg">
-                Seu navegador não suporta o elemento de áudio.
               </audio>
               <img class="regirako" src="assets/regirako.png" alt="Regirako">
             `;
-
             audio = document.getElementById('bg-audio');
             regirakoImg = document.querySelector('.regirako');
-
-            // Pulsação do Regirako só quando música toca
-            audio.onplay = () => {
-              if (!context) setupAudioVisualizer();
-            };
-            audio.onpause = () => {
-              if (regirakoImg) regirakoImg.style.transform = 'scale(1)';
-            };
-
+            audio.onplay = () => { if (!context) setupAudioVisualizer(); };
+            audio.onpause = () => { if (regirakoImg) regirakoImg.style.transform='scale(1)'; };
           }, 3000);
 
         } else {
-          // Segunda tela: tutorial caso falhe
+          // Segunda tela: apenas secure-box + tutorial
           document.body.innerHTML = '';
           document.body.appendChild(secureBox);
         }
       };
     </script>
-  </head>
-  <body>
-    <h1>Redirecionando para o cliente de torrent...</h1>
-    <img class="regirako" src="assets/regirako.png" alt="Regirako">
   </body>
 </html>
