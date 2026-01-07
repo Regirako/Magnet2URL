@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Redirecionando Magnet</title>
+  <title>Magnet2URL - Redirecionador de Links Magnet</title>
 
   <!-- Meta tags de segurança -->
   <meta name="google-site-verification" content="rmhxBOZXrfRm7gnnhDCH19dY_IAXxXn_2B2y6tNi4VY" />
@@ -10,112 +10,971 @@
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self';">
- 
+  
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 2em;
-      background-color: #f5f5f5;
-      position: relative;
-      margin: 0;
-    }
-    h1, h2, p {
-      color: #333;
-    }
-    button {
-      padding: 12px 24px;
-      font-size: 1em;
-      border: none;
-      background-color: #2e7d32;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-    }
-    button:hover {
-      background-color: #1b5e20;
-      transform: scale(1.05);
-    }
-    .music-btn {
-      background-color: #d55901;
-    }
-    .music-btn:hover {
-      background-color: #842e03;
-    }
-    .footer-banner {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: rgba(51, 51, 51, 0.2);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      z-index: 10;
-    }
-    .footer-banner span {
-      white-space: nowrap;
-      display: inline-block;
-      padding-left: 100%;
-      animation: slide-left 50s linear infinite;
-      color: #333;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    @keyframes slide-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .regirako {
-      position: fixed;
-      bottom: 60px;
-      right: 20px;
-      height: 600px;
-      opacity: 0.5;
-      z-index: 5;
-      transform-origin: center center;
-      pointer-events: none;
-      transition: transform 0.1s ease;
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #121212;
+      --bg-card: #1a1a1a;
+      --bg-surface: #202020;
+      --border-color: #2a2a2a;
+      --border-light: #3a3a3a;
+      --accent-primary: #ffffff;
+      --accent-secondary: #ffffff;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --text-tertiary: #ffffff;
+      --gradient-primary: linear-gradient(145deg, #1a1a1a 0%, #0f0f0f 100%);
+      --gradient-accent: linear-gradient(135deg, #ff6b00 0%, #ff9500 100%);
+      --accent-glow: 0 4px 20px rgba(255, 107, 0, 0.3);
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    /* Caixa de segurança */
-    .secure-box {
-      max-width: 700px;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #c8f7c5 0%, #57a63a 100%);
-      box-shadow: 0 15px 30px rgba(68, 120, 45, 0.45);
-      color: #083109;
-      text-align: center;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      perspective: 1000px;
-      animation: floatBox 3s ease-in-out infinite alternate;
-    }
-    @keyframes floatBox {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-6px); }
-    }
-    .secure-box h2 {
-      margin: 0 0 8px 0;
-      font-size: 20px;
-      letter-spacing: 1px;
-    }
-    .secure-box p {
-      font-size: 15px;
-      line-height: 1.45;
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      position: relative;
+      min-height: 100vh;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      padding: 0;
+      margin: 0;
+      font-size: 0.9em;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 20px;
+      grid-template-areas: 
+        "header header"
+        "main sidebar"
+        "footer footer";
+      min-height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      grid-area: header;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0 15px 0;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 15px;
+      font-size: 0.95em;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .logo-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-tertiary);
+      font-weight: 400;
+    }
+
+    .security-badge {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 8px 15px;
+      font-size: 0.85rem;
+      color: var(--accent-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--accent-glow);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .security-badge:hover {
+      border-color: var(--accent-secondary);
+      transform: translateY(-2px);
+    }
+
+    /* Main Content */
+    .main-content {
+      grid-area: main;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      gap: 25px;
+      height: 100%;
+      padding-top: 0;
+      max-height: calc(100vh - 180px);
+      overflow: hidden;
+    }
+
+    .status-section {
+      background: var(--gradient-primary);
+      border: 1px solid var(--border-light);
+      border-radius: 18px;
+      padding: 25px;
+      position: relative;
+      overflow: visible;
+      box-shadow: var(--card-shadow);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0;
+    }
+
+    .status-section:hover {
+      border-color: #444444;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .status-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .status-avatar-container {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 25px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: all 0.3s ease;
+      filter: brightness(1.1) contrast(1.1) saturate(1.2);
+      animation: avatar-pulse 2s infinite alternate ease-in-out;
+    }
+
+    .status-avatar:hover {
+      transform: rotate(5deg) scale(1.05);
+      filter: brightness(1.2) contrast(1.2) saturate(1.3);
+      animation-play-state: paused;
+    }
+
+    @keyframes avatar-pulse {
+      0% {
+        filter: brightness(1.1) contrast(1.1) saturate(1.2) drop-shadow(0 0 10px rgba(255, 107, 0, 0.4));
+      }
+      50% {
+        filter: brightness(1.15) contrast(1.15) saturate(1.25) drop-shadow(0 0 20px rgba(255, 107, 0, 0.6));
+      }
+      100% {
+        filter: brightness(1.1) contrast(1.1) saturate(1.2) drop-shadow(0 0 15px rgba(255, 107, 0, 0.8));
+      }
+    }
+
+    .music-playing .status-avatar {
+      animation: music-pulse 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes music-pulse {
+      0% {
+        filter: brightness(1.1) contrast(1.1) saturate(1.2) drop-shadow(0 0 15px rgba(255, 107, 0, 0.6));
+        transform: scale(1);
+      }
+      50% {
+        filter: brightness(1.2) contrast(1.2) saturate(1.3) drop-shadow(0 0 25px rgba(255, 107, 0, 0.8));
+        transform: scale(1.02);
+      }
+      100% {
+        filter: brightness(1.15) contrast(1.15) saturate(1.25) drop-shadow(0 0 20px rgba(255, 107, 0, 1));
+        transform: scale(1.01);
+      }
+    }
+
+    .status-icon {
+      width: 55px;
+      height: 55px;
+      fill: var(--accent-secondary);
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    .status-text {
+      width: 100%;
+    }
+
+    .status-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+      line-height: 1.2;
+      word-wrap: break-word;
+    }
+
+    .status-description {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 20px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .status-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 160px;
+      box-shadow: var(--accent-glow);
+      letter-spacing: 0.01em;
+    }
+
+    .btn-primary {
+      background: var(--gradient-accent);
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.6s;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(255, 107, 0, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--accent-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      height: fit-content;
+      margin-top: 0;
+      max-height: 240px;
+    }
+
+    .info-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      font-size: 0.9em;
+    }
+
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .info-card:hover::before {
+      opacity: 1;
+    }
+
+    .info-card:hover {
+      border-color: #444444;
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .info-card-icon {
+      width: 45px;
+      height: 45px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+    }
+
+    .info-card-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--accent-secondary);
+    }
+
+    .info-card h3 {
+      color: var(--accent-secondary);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .info-card p {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .info-card a {
+      color: var(--accent-secondary);
+      text-decoration: underline;
+      transition: border-color 0.3s ease;
+      font-weight: bold;
+    }
+
+    .info-card a:hover {
+      opacity: 0.8;
+    }
+
+    .bold-text {
+      font-weight: bold !important;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      grid-area: sidebar;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      padding: 25px;
+      background: var(--bg-surface);
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--card-shadow);
+      height: fit-content;
+      margin-top: 0;
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
+    }
+
+    .section-title {
+      color: var(--accent-secondary);
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tutorial-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--accent-glow);
+      font-size: 0.9em;
+    }
+
+    .step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .step:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--gradient-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-primary);
+      flex-shrink: 0;
+      font-size: 1rem;
+      box-shadow: var(--accent-glow);
+    }
+
+    .step-content h4 {
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .step-content p {
+      color: var(--text-tertiary);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .step-content a {
+      color: var(--accent-secondary);
+      text-decoration: underline;
+      transition: border-color 0.3s ease;
+      font-weight: bold;
+    }
+
+    .step-content a:hover {
+      opacity: 0.8;
+    }
+
+    .music-player {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: var(--accent-glow);
+      font-size: 0.9em;
+    }
+
+    .music-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .music-btn {
+      background: var(--gradient-accent);
+      border: none;
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: var(--accent-glow);
+    }
+
+    .music-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+    }
+
+    .music-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .visualizer-container {
+      width: 100%;
+      height: 70px;
+      background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .visualizer {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 10px;
+    }
+
+    .visualizer-bar {
+      width: 6px;
+      background: linear-gradient(to top, #ff6b00, #ff9500, #ffaa00);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.1s ease;
+      min-height: 8px;
+      box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+    }
+
+    /* Footer */
+    .footer {
+      grid-area: footer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-top: 1px solid var(--border-light);
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: var(--accent-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+      position: relative;
+      padding: 2px 0;
+      white-space: nowrap;
+      font-size: 0.9rem;
+    }
+
+    .footer a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent-secondary);
+      transition: width 0.3s ease;
+    }
+
+    .footer a:hover::after {
+      width: 100%;
+    }
+
+    .footer a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Animations */
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(255,107,0,0.1);
+      border-top: 3px solid #ff6b00;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 15px auto;
+      box-shadow: 0 0 20px rgba(255,107,0,0.2);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+          "header"
+          "main"
+          "sidebar"
+          "footer";
+        padding: 12px;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .footer-links {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      
+      .main-content, .sidebar {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 0.85em;
+      }
+      
+      .logo-title {
+        font-size: 1.5rem;
+      }
+      
+      .status-title {
+        font-size: 1.5rem;
+      }
+      
+      .status-description {
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        min-width: 140px;
+        padding: 10px 18px;
+        font-size: 0.85rem;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .status-avatar-container {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .footer-links {
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+        gap: 15px;
+      }
+      
+      .status-section {
+        padding: 20px 15px;
+        min-height: 240px;
+      }
+      
+      .status-avatar-container {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .status-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 250px;
+      }
+      
+      .footer {
+        font-size: 0.8rem;
+      }
+      
+      .footer-links {
+        gap: 10px;
+      }
+    }
+
+    /* Utility classes */
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Example code styling */
+    .code-example {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 15px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.8rem;
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .code-example code {
+      color: var(--accent-secondary);
+      display: block;
+      line-height: 1.3;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    /* Status indicators */
+    .status-success .status-avatar-container .status-avatar {
+      animation: avatar-pulse 2s infinite alternate ease-in-out;
+    }
+
+    .status-error .status-avatar-container .status-avatar {
+      animation: avatar-pulse 2s infinite alternate ease-in-out;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-card);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(to bottom, #ff6b00, #ff9500);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(to bottom, #ff9500, #ffaa00);
+    }
+
+    /* Ensure content fits */
+    .content-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Make sure all text is visible */
+    .visible-text {
+      color: var(--text-primary) !important;
+      opacity: 1 !important;
     }
   </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-text">
+        <div class="logo-title">Magnet2URL</div>
+        <div class="logo-subtitle">Redirecionador seguro de links magnet</div>
+      </div>
+      <div class="security-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.1,7 14,7.9 14,9C14,10.1 13.1,11 12,11C10.9,11 10,10.1 10,9C10,7.9 10.9,7 12,7M18,14.66C18,15.5 17.75,16.31 17.31,17H6.69C6.25,16.31 6,15.5 6,14.66V10.34C6,9.5 6.25,8.69 6.69,8H17.31C17.75,8.69 18,9.5 18,10.34V14.66Z"/>
+        </svg>
+        Open Source • Sem rastreamento • 100% Seguro
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Status Section -->
+      <section class="status-section" id="statusSection">
+        <div class="status-content" id="statusContent">
+          <!-- Conteúdo será preenchido pelo JavaScript -->
+        </div>
+      </section>
+
+      <!-- Info Cards Grid -->
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z"/>
+            </svg>
+          </div>
+          <h3>Segurança Total</h3>
+          <p>Tudo ocorre localmente no seu navegador. Nenhum dado é enviado para servidores externos ou coletado.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+          </div>
+          <h3>Código Aberto</h3>
+          <p>Transparência completa. Todo o código está <a href="https://github.com/Regirako/Magnet2URL" target="_blank" class="bold-text">disponível no GitHub</a> para auditoria e contribuições.</p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+          </div>
+          <h3>Compatível Universal</h3>
+          <p>Funciona com <span class="bold-text">qBittorrent</span>, Transmission e qualquer cliente que suporte links magnet.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="https://github.com/Regirako/Magnet2URL" target="_blank">GitHub</a>
+        <a href="#" onclick="showHelp()">Como usar</a>
+        <a href="#" onclick="toggleMusic()" id="musicFooterBtn">Parar música</a>
+      </div>
+      <div>
+        Magnet2URL © 2024 • Tecnologia segura e transparente
+      </div>
+    </footer>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="tutorial-section hidden" id="tutorialSection">
+        <h3 class="section-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12.5,17H11V13.5H7V12H11V7H12.5V12H17V13.5H12.5V17Z"/>
+          </svg>
+          Guia de Solução
+        </h3>
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Instalação do Cliente</h4>
+            <p>Baixe e instale um cliente de torrent como o <a href="https://www.fosshub.com/qBittorrent.html" target="_blank" class="bold-text">qBittorrent</a>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Configuração</h4>
+            <p>Durante a instalação, marque a opção para tornar o programa padrão para links magnet.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Retorno e Tentativa</h4>
+            <p>Volte a esta página e clique em "Tentar Novamente" para iniciar o download.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="music-player hidden" id="musicPlayer">
+        <h3 class="section-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12,3V12.26C11.5,12.09 11,12 10.5,12C7.46,12 5,14.46 5,17.5C5,20.54 7.46,23 10.5,23C13.54,23 16,20.54 16,17.5V6H19V3H12Z"/>
+          </svg>
+          Player Musical
+        </h3>
+        <div class="music-controls">
+          <button class="music-btn" onclick="toggleMusic()" id="musicToggle">
+            <svg viewBox="0 0 24 24">
+              <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+            </svg>
+            Parar Música
+          </button>
+          <div class="visualizer-container">
+            <div class="visualizer" id="visualizer"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Audio Element -->
+  <audio id="bg-audio" loop autoplay>
+    <source src="" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+  </audio>
+
   <script>
     let magnetLink = "";
     let audio;
     let context, analyser, source;
-    let regirakoImg;
+    let visualizerBars = [];
+    let isMusicPlaying = true;
+    let animationId = null;
 
     const musicList = [
       'assets/tokyo.mp3',
@@ -137,120 +996,280 @@
 
     function toggleMusic() {
       if (!audio) return;
-      if (audio.paused) audio.play();
-      else audio.pause();
-    }
-
-    function animate() {
-      if (!analyser || !regirakoImg) return;
-      const data = new Uint8Array(analyser.frequencyBinCount);
-      analyser.getByteFrequencyData(data);
-      const average = data.reduce((a, b) => a + b, 0) / data.length;
-      const scale = 1 + (average / 512) * 0.42;
-      regirakoImg.style.transform = `scale(${scale})`;
-      requestAnimationFrame(animate);
+      
+      if (!audio.paused) {
+        audio.pause();
+        isMusicPlaying = false;
+        document.getElementById('musicToggle').innerHTML = `
+          <svg viewBox="0 0 24 24">
+            <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+          </svg>
+          Tocar Música
+        `;
+        document.getElementById('musicFooterBtn').textContent = 'Tocar música';
+        
+        // Remove a classe de música tocando do avatar
+        const statusSection = document.getElementById('statusSection');
+        if (statusSection) {
+          statusSection.classList.remove('music-playing');
+        }
+        
+        // Para a animação quando a música pausa
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      } else {
+        audio.play();
+        isMusicPlaying = true;
+        document.getElementById('musicToggle').innerHTML = `
+          <svg viewBox="0 0 24 24">
+            <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+          </svg>
+          Parar Música
+        `;
+        document.getElementById('musicFooterBtn').textContent = 'Parar música';
+        
+        // Adiciona a classe de música tocando ao avatar
+        const statusSection = document.getElementById('statusSection');
+        if (statusSection) {
+          statusSection.classList.add('music-playing');
+        }
+        
+        if (!context) setupAudioVisualizer();
+        else animateVisualizer(); // Reinicia a animação
+      }
     }
 
     function setupAudioVisualizer() {
-      context = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = context.createAnalyser();
-      source = context.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(context.destination);
-      animate();
+      try {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = context.createAnalyser();
+        source = context.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(context.destination);
+        
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        
+        const visualizer = document.getElementById('visualizer');
+        visualizer.innerHTML = '';
+        visualizerBars = [];
+        
+        const barCount = 16;
+        for (let i = 0; i < barCount; i++) {
+          const bar = document.createElement('div');
+          bar.className = 'visualizer-bar';
+          bar.style.height = '20%';
+          visualizer.appendChild(bar);
+          visualizerBars.push(bar);
+        }
+        
+        animateVisualizer();
+        
+        // Adiciona a classe de música tocando ao avatar
+        const statusSection = document.getElementById('statusSection');
+        if (statusSection) {
+          statusSection.classList.add('music-playing');
+        }
+      } catch (e) {
+        console.warn('Web Audio API não suportada:', e);
+      }
+    }
+
+    function animateVisualizer() {
+      if (!analyser || !isMusicPlaying || audio.paused) {
+        // Se a música não está tocando, para a animação
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+        return;
+      }
+      
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+      
+      visualizerBars.forEach((bar, i) => {
+        const value = dataArray[Math.floor(i * bufferLength / visualizerBars.length)];
+        const height = 15 + (value / 255) * 70;
+        bar.style.height = `${height}%`;
+        bar.style.opacity = 0.5 + (value / 255) * 0.5;
+        
+        // Adiciona cor gradiente dinâmica baseada na intensidade
+        const intensity = value / 255;
+        const hue = 30 + (intensity * 20); // Varia entre laranja e amarelo
+        bar.style.background = `linear-gradient(to top, 
+          hsl(${hue}, 100%, 50%), 
+          hsl(${hue + 10}, 100%, 60%), 
+          hsl(${hue + 20}, 100%, 70%))`;
+        bar.style.boxShadow = `0 0 ${8 + intensity * 8}px rgba(255, ${107 + intensity * 100}, 0, ${0.5 + intensity * 0.3})`;
+      });
+      
+      animationId = requestAnimationFrame(animateVisualizer);
+    }
+
+    function createSpinner() {
+      const spinner = document.createElement('div');
+      spinner.className = 'spinner';
+      return spinner;
+    }
+
+    function showTutorial() {
+      document.getElementById('tutorialSection').classList.remove('hidden');
+      document.getElementById('musicPlayer').classList.remove('hidden');
+      document.getElementById('tutorialSection').classList.add('fade-in');
+      document.getElementById('musicPlayer').classList.add('fade-in');
+    }
+
+    function showHelp() {
+      alert("COMO USAR MAGNET2URL\n\n" +
+            "1. Obtenha um link magnet (começa com 'magnet:?')\n" +
+            "2. Adicione ao final da URL após #\n" +
+            "   Exemplo: https://regirako.github.io/Magnet2URL/#magnet:?xt=...\n" +
+            "3. A página redirecionará automaticamente\n" +
+            "4. Se não funcionar, siga o guia na barra lateral");
+      return false;
+    }
+
+    function updateStatusCard(title, description, showSpinner = false, showButton = false) {
+      const statusSection = document.getElementById('statusSection');
+      const statusContent = document.getElementById('statusContent');
+      
+      statusSection.className = 'status-section fade-in';
+      
+      let content = `
+        <div class="status-avatar-container">
+          <img src="assets/regirako.png" alt="Regirako" class="status-avatar" onerror="this.style.display='none'; document.querySelector('.status-avatar-container').innerHTML = '<svg class=\\'status-icon\\' viewBox=\\'0 0 24 24\\'><path d=\\'M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2Z\\'/></svg>'">
+        </div>
+        <div class="status-text">
+          <h1 class="status-title">${title}</h1>
+          <p class="status-description">${description}</p>
+        </div>
+      `;
+      
+      if (showSpinner) {
+        content += '<div class="spinner"></div>';
+        statusSection.classList.add('status-success');
+      }
+      
+      if (showButton) {
+        content += `
+          <div class="status-actions">
+            <button class="btn btn-primary" onclick="redirecionar()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14,12L10,8V11H2V13H10V16M20,18V6C20,4.89 19.1,4 18,4H6A2,2 0 0,0 4,6V9H6V6H18V18H6V15H4V18A2,2 0 0,0 6,20H18A2,2 0 0,0 20,18Z"/>
+              </svg>
+              Tentar Novamente
+            </button>
+            <button class="btn btn-secondary" onclick="showHelp()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M15.07,11.25L14.17,12.17C13.45,12.89 13,13.5 13,15H11V14.5C11,13.39 11.45,12.39 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.89 13.1,7 12,7A2,2 0 0,0 10,9H8A4,4 0 0,1 12,5A4,4 0 0,1 16,9C16,9.88 15.64,10.67 15.07,11.25M13,19H11V17H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"/>
+              </svg>
+              Ajuda
+            </button>
+          </div>
+        `;
+        statusSection.classList.add('status-error');
+      }
+      
+      statusContent.innerHTML = content;
+      
+      // Adiciona exemplo de código se não houver magnet link
+      if (!magnetLink.startsWith("magnet:?")) {
+        const example = document.createElement('div');
+        example.className = 'code-example';
+        example.innerHTML = `
+          <p style="color: var(--text-secondary); margin-bottom: 8px; font-size: 0.8rem;">Exemplo de URL com link magnet:</p>
+          <code>https://regirako.github.io/Magnet2URL/#magnet:?xt=urn:btih:EXEMPLO123456789...</code>
+        `;
+        statusContent.appendChild(example);
+      }
+      
+      // Se a música está tocando, adiciona a classe de animação
+      if (isMusicPlaying && !audio.paused) {
+        statusSection.classList.add('music-playing');
+      }
+    }
+
+    function startMusic() {
+      const musicSrc = getRandomMusic();
+      audio = document.getElementById('bg-audio');
+      audio.src = musicSrc;
+      audio.volume = 0.4;
+      audio.autoplay = true;
+      
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isMusicPlaying = true;
+          document.getElementById('musicToggle').innerHTML = `
+            <svg viewBox="0 0 24 24">
+              <path d="M14,19H18V5H14M6,19H10V5H6V19Z"/>
+            </svg>
+            Parar Música
+          `;
+          document.getElementById('musicFooterBtn').textContent = 'Parar música';
+          
+          // Adiciona a classe de música tocando ao avatar
+          const statusSection = document.getElementById('statusSection');
+          if (statusSection) {
+            statusSection.classList.add('music-playing');
+          }
+          
+          setupAudioVisualizer();
+        }).catch(error => {
+          console.log('Reprodução automática bloqueada:', error);
+          document.getElementById('musicToggle').innerHTML = `
+            <svg viewBox="0 0 24 24">
+              <path d="M8,5.14V19.14L19,12.14L8,5.14Z"/>
+            </svg>
+            Tocar Música
+          `;
+          document.getElementById('musicFooterBtn').textContent = 'Tocar música';
+          isMusicPlaying = false;
+        });
+      }
     }
 
     window.onload = () => {
       magnetLink = decodeURIComponent(window.location.hash.substring(1));
 
-      // Cria caixa de segurança
-      const secureBox = document.createElement('div');
-      secureBox.className = 'secure-box';
-      secureBox.innerHTML = `
-        <h2>MAGNET2URL</h2>
-        <p>Magnet2URL é uma ferramenta <a href='https://github.com/Regirako/Magnet2URL' target='_blank'><strong>open-source</strong></a> que apenas redireciona links magnet para seu cliente de torrent local.
-        Nenhum dado é coletado, alterado ou salvo em qualquer servidor.</p>
-      `;
-
-      // Tilt suave
-      secureBox.addEventListener('mousemove', e => {
-        const rect = secureBox.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        const rotateX = (y / rect.height) * 6;
-        const rotateY = (x / rect.width) * -6;
-        secureBox.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      });
-      secureBox.addEventListener('mouseleave', () => {
-        secureBox.style.transform = 'rotateX(0deg) rotateY(0deg)';
-      });
+      startMusic();
 
       if (magnetLink.startsWith("magnet:?")) {
-        // PRIMEIRA TELA
-        document.body.innerHTML = `<h1>Redirecionando para o cliente de torrent...</h1>`;
-        document.body.appendChild(secureBox);
-
-        // Adiciona Regirako estático
-        const staticImg = document.createElement('img');
-        staticImg.className = 'regirako';
-        staticImg.src = 'assets/regirako.png';
-        staticImg.alt = 'Regirako';
-        document.body.appendChild(staticImg);
+        updateStatusCard(
+          'Redirecionando...',
+          'Iniciando transferência para seu cliente de torrent',
+          true
+        );
 
         window.location.href = magnetLink;
 
         setTimeout(() => {
-          const musicSrc = getRandomMusic();
-
-          // SEGUNDA TELA: caso não redirecione
-          document.body.innerHTML = '';
-          document.body.appendChild(secureBox);
-
-          document.body.innerHTML += `
-            <h2>Você não foi redirecionado automaticamente?</h2>
-            <p>
-              Isso pode ocorrer se você não tiver um programa de gerenciamento de arquivos torrents para capturar <strong>Magnet Links</strong> instalado.<br><br>
-              <strong>1.</strong> Baixe e instale o <a href='https://www.fosshub.com/qBittorrent.html' target='_blank'><strong>qBittorrent Windows 64x bits</strong></a>.<br>
-              <strong>2.</strong> Durante a instalação, permita que ele seja o programa padrão para arquivos <strong>.torrent</strong> e <strong>Magnet Links</strong>.<br>
-              <strong>3.</strong> Volte nesta página e clique no botão abaixo:
-            </p>
-            <button onclick="redirecionar()">Clique aqui para tentar novamente</button><br>
-            <button class="music-btn" onclick="toggleMusic()">Music ON/OFF</button>
-            <div class="footer-banner">
-              <span><strong>Leia o que está escrito na página, é um tutorial de como utilizar o redirecionamento automático para o download no aplicativo de gerenciamento de arquivos torrents.</strong></span>
-            </div>
-            <audio id="bg-audio" autoplay loop>
-              <source src="${musicSrc}" type="audio/mpeg">
-              Seu navegador não suporta o elemento de áudio.
-            </audio>
-          `;
-
-          // Regirako pulsando
-          regirakoImg = document.createElement('img');
-          regirakoImg.className = 'regirako';
-          regirakoImg.src = 'assets/regirako.png';
-          regirakoImg.alt = 'Regirako';
-          document.body.appendChild(regirakoImg);
-
-          audio = document.getElementById('bg-audio');
-          audio.onplay = () => {
-            if (!context) setupAudioVisualizer();
-          };
-          audio.onpause = () => {
-            if (regirakoImg) regirakoImg.style.transform = 'scale(1)';
-          };
+          updateStatusCard(
+            'Redirecionamento Não Efetuado',
+            'O cliente de torrent não foi iniciado automaticamente. Siga as instruções na barra lateral para configurar.',
+            false,
+            true
+          );
+          
+          showTutorial();
+          
         }, 3000);
 
       } else {
-        // Segunda tela: apenas secure-box caso não seja magnet
-        document.body.innerHTML = '';
-        document.body.appendChild(secureBox);
+        updateStatusCard(
+          'Pronto para Redirecionar',
+          'Adicione um link magnet à URL para iniciar o download automaticamente',
+          false
+        );
+        
+        showTutorial();
       }
     };
   </script>
-</head>
-<body>
-  <h1>Redirecionando para o cliente de torrent...</h1>
-  <img class="regirako" src="assets/regirako.png" alt="Regirako">
 </body>
 </html>
